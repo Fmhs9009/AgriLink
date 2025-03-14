@@ -14,7 +14,7 @@ const FeaturedProducts = () => {
   if (error) return null;
 
   const featuredProducts = products?.slice(0, 3) || [];
-
+console.log(featuredProducts);
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -25,7 +25,7 @@ const FeaturedProducts = () => {
               <div className="h-48 bg-gray-200">
                 {product.images?.[0] && (
                   <img
-                    src={product.images[0]}
+                    src={product.images[0].url}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />

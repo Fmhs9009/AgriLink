@@ -162,13 +162,13 @@ const Shop = () => {
       try {
         // Try to fetch products from API
         const productsResponse = await productAPI.getAll();
-        
-        if (productsResponse && productsResponse.success && productsResponse.data && productsResponse.data.length > 0) {
-          setProducts(productsResponse.data);
+       
+        if (productsResponse && productsResponse.success ) {
+          setProducts(productsResponse.products);
           setUseMockData(false);
         } else {
           // If API returns empty data, use mock data
-          console.log('API returned empty data, using mock products');
+    
           setProducts(MOCK_PRODUCTS);
           setUseMockData(true);
           toast('Using demo products for preview', {
@@ -183,13 +183,18 @@ const Shop = () => {
         
         // Try to fetch categories from API
         try {
-          const categoriesResponse = await categoryAPI.getAll();
+          // Use mock categories directly instead of API call
+          setCategories(MOCK_CATEGORIES);
+          
+          /* Commenting out API call that's causing 404 error
+          const categoriesResponse = await productAPI.getProductCategories();
           if (categoriesResponse && categoriesResponse.success && categoriesResponse.data && categoriesResponse.data.length > 0) {
             setCategories(['All', ...categoriesResponse.data]);
           } else {
             // If API returns empty categories, use mock categories
             setCategories(MOCK_CATEGORIES);
           }
+          */
         } catch (categoryError) {
           console.error('Error fetching categories:', categoryError);
           setCategories(MOCK_CATEGORIES);

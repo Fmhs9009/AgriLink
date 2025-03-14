@@ -41,7 +41,7 @@ const ProtectedRoute = ({
         // If roles are specified, check if user has required role
         if (allowedRoles.length > 0) {
           const hasRequiredRole = authService.hasRole(allowedRoles);
-          console.log('Role check:', { allowedRoles, hasRequiredRole });
+       //   console.log('Role check:', { allowedRoles, hasRequiredRole });
           
           if (!hasRequiredRole) {
             toast.error("You don't have permission to access this page");
@@ -52,7 +52,7 @@ const ProtectedRoute = ({
         }
 
         // User is authenticated and has required role (if any)
-        console.log('Access granted');
+      //  console.log('Access granted');
         setIsAllowed(true);
       } catch (error) {
         console.error('Access check failed:', error);

@@ -614,3 +614,41 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 */
+
+/**
+ * Get user by ID
+ * @route GET /api/auth/user/:id
+ */
+exports.getUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required"
+      });
+    }
+
+    const user = await User.findById(userId).select('-password -otp -otpExpiry');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user details",
+      error: error.message
+    });
+  }
+};

@@ -123,7 +123,7 @@ const handleApiResponse = async (apiCall) => {
 export const productAPI = {
   // Get all products with optional filters
   getAll: async (filters = {}) => {
-    console.log("Calling getAll products API with filters:", filters);
+   // console.log("Calling getAll products API with filters:", filters);
     return handleApiResponse(() => api.get('/products', { params: filters }));
   },
 
@@ -136,7 +136,27 @@ export const productAPI = {
   // Get products by farmer ID
   getByFarmer: async (farmerId) => {
     console.log("Calling getByFarmer API for farmer ID:", farmerId);
-    return handleApiResponse(() => api.get(`/products/farmer/products`));
+    try {
+      const response = await api.get(`/products/farmer/products`);
+      console.log("Raw farmer products response:", response);
+      
+      // Handle different response formats
+      if (response.data && response.data.products) {
+        return { data: response.data.products };
+      } else if (Array.isArray(response.data)) {
+        return { data: response.data };
+      } else {
+        console.warn("Unexpected response format from farmer products API:", response.data);
+        return { data: [] };
+      }
+    } catch (error) {
+      console.error("Error in getByFarmer:", error);
+      return {
+        success: false, 
+        message: error.response?.data?.message || 'Failed to fetch farmer products',
+        data: []
+      };
+    }
   },
   
   // Upload image to Cloudinary
@@ -255,7 +275,29 @@ export const productAPI = {
   // Delete product
   delete: async (id) => {
     console.log("Calling delete product API for ID:", id);
-    return handleApiResponse(() => api.delete(`/products/product/${id}`));
+    try {
+      const response = await api.delete(`/products/product/${id}`);
+      console.log("Delete product response:", response);
+      
+      if (response.status === 200 || response.status === 204) {
+        return { 
+          success: true, 
+          message: 'Product deleted successfully' 
+        };
+      } else {
+        return { 
+          success: false, 
+          message: response.data?.message || 'Failed to delete product' 
+        };
+      }
+    } catch (error) {
+      console.error("Error in delete product:", error);
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Failed to delete product',
+        error: error.response?.data || error.message
+      };
+    }
   },
   
   // Get products by category
@@ -294,6 +336,25 @@ export const productAPI = {
   getReviews: async (id) => {
     console.log("Calling getReviews API for ID:", id);
     return handleApiResponse(() => api.get(`/products/reviews/${id}`));
+  },
+  
+  // Get product categories
+  getProductCategories: async () => {
+    console.log("Calling getProductCategories API");
+    return handleApiResponse(() => api.get('/products/categories'));
+  },
+
+  // Get products by category
+  getProductsByCategory: async (category) => {
+    try {
+      console.log(`Fetching products for category: ${category}`);
+      const response = await api.get(`/products/category/${category}`);
+      console.log('Products by category response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching products by category:', error);
+      throw error;
+    }
   }
 };
 
@@ -483,6 +544,12 @@ export const userAPI = {
   // Change password
   changePassword: async (passwordData) => {
     return handleApiResponse(() => api.put('/users/password', passwordData));
+  },
+
+  // Get user by ID
+  getById: async (userId) => {
+    console.log("Fetching user details for ID:", userId);
+    return handleApiResponse(() => api.get(`/auth/user/${userId}`));
   }
 };
 

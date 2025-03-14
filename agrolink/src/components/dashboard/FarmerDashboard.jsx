@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaChartLine, FaUsers, FaShoppingCart, FaWarehouse, FaMoneyBillWave, FaCalendarCheck, FaHandshake, FaSeedling, FaClipboardList, FaTractor, FaChartBar, FaMapMarkerAlt, FaLeaf } from 'react-icons/fa';
+import { FaChartLine, FaUsers, FaShoppingCart, FaWarehouse, FaMoneyBillWave, FaCalendarCheck, FaHandshake, FaSeedling, FaClipboardList, FaTractor, FaChartBar, FaMapMarkerAlt, FaLeaf, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
 import { useApi } from '../../hooks/useApi';
 import { contractAPI, productAPI } from '../../services/api';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { toast } from 'react-hot-toast';
 
 // Utility functions
 const formatCurrency = (amount) => {
@@ -174,7 +175,7 @@ const MyProducts = ({ products }) => (
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -183,9 +184,9 @@ const MyProducts = ({ products }) => (
               <tr key={product._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    {product.image ? (
+                    {product.images && product.images.length > 0 ? (
                       <img 
-                        src={product.image} 
+                        src={product.images[0].url} 
                         alt={product.name} 
                         className="h-10 w-10 rounded-full mr-3 object-cover"
                       />
@@ -207,28 +208,75 @@ const MyProducts = ({ products }) => (
                   ₹{formatCurrency(product.price)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.stock} {product.unit || 'kg'}
+                  {product.availableQuantity} {product.unit || 'kg'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    product.availableQuantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                    {product.availableQuantity > 0 ? 'In Stock' : 'Out of Stock'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <Link 
-                    to={`/products/edit/${product._id}`}
-                    className="text-blue-600 hover:text-blue-800 mr-3"
-                  >
-                    Edit
-                  </Link>
-                  <button 
-                    className="text-red-600 hover:text-red-800"
-                    onClick={() => {/* Handle delete */}}
-                  >
-                    Delete
-                  </button>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div className="flex justify-end space-x-2">
+                    <Link 
+                      to={`/products/edit/${product._id}`}
+                      className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100 transition-colors"
+                      title="Edit Product"
+                    >
+                      <FaEdit className="w-4 h-4" />
+                      <span className="sr-only">Edit</span>
+                    </Link>
+                    <Link 
+                      to={`/products/${product._id}`}
+                      className="text-green-600 hover:text-green-800 p-1 rounded-full hover:bg-green-100 transition-colors"
+                      title="View Product"
+                    >
+                      <FaEye className="w-4 h-4" />
+                      <span className="sr-only">View</span>
+                    </Link>
+                    <button 
+                      onClick={() => {
+                        if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
+                          console.log("Deleting product with ID:", product._id);
+                          
+                          // Show loading toast
+                          const loadingToast = toast.loading('Deleting product...');
+                          
+                          productAPI.delete(product._id)
+                            .then((response) => {
+                              console.log("Delete product response:", response);
+                              
+                              // Check if the deletion was successful
+                              if (response.success === false) {
+                                throw new Error(response.message || 'Failed to delete product');
+                              }
+                              
+                              // Dismiss loading toast and show success
+                              toast.dismiss(loadingToast);
+                              toast.success('Product deleted successfully');
+                              
+                              // Refresh the page to update the product list
+                              setTimeout(() => {
+                                window.location.reload();
+                              }, 1000);
+                            })
+                            .catch(err => {
+                              console.error('Error deleting product:', err);
+                              
+                              // Dismiss loading toast and show error
+                              toast.dismiss(loadingToast);
+                              toast.error(err.message || 'Failed to delete product');
+                            });
+                        }
+                      }}
+                      className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition-colors"
+                      title="Delete Product"
+                    >
+                      <FaTrash className="w-4 h-4" />
+                      <span className="sr-only">Delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
@@ -349,16 +397,28 @@ const FarmInsights = () => (
   </div>
 );
 
-const Dashboard = () => {
+const FarmerDashboard = () => {
   const user = useSelector((state) => state.auth.loginData);
   const [activeTab, setActiveTab] = useState('overview');
 
   const { data: dashboardData, loading, error } = useApi(async () => {
     try {
-      const [productsRes, contractsRes] = await Promise.all([
-        productAPI.getAll(),
-        contractAPI.getAll()
-      ]);
+      let productsRes;
+      
+      // Get products based on user role
+      if (user?.role === 'admin') {
+        console.log("Dashboard: Fetching all products for admin");
+        productsRes = await productAPI.getAll();
+      } else {
+        // Farmers see only their products
+        console.log("Dashboard: Fetching products for farmer with ID:", user?._id);
+        productsRes = user?._id ? await productAPI.getByFarmer(user._id) : { data: [] };
+      }
+      
+      const contractsRes = await contractAPI.getAll();
+      
+      console.log("Dashboard products response:", productsRes);
+      console.log("Dashboard contracts response:", contractsRes);
 
       // Ensure data is in the expected format
       const products = Array.isArray(productsRes.data) ? productsRes.data : 
@@ -366,6 +426,9 @@ const Dashboard = () => {
       
       const contracts = Array.isArray(contractsRes.data) ? contractsRes.data : 
                        (contractsRes.data?.contracts || []);
+      
+      console.log("Dashboard processed products:", products);
+      console.log("Dashboard processed contracts:", contracts);
       
       // Now safely use array methods
       const activeContracts = contracts.filter(c => c?.status === 'active').length;
@@ -393,7 +456,7 @@ const Dashboard = () => {
       console.error("Dashboard data fetch error:", error);
       throw new Error("Failed to load dashboard data. Please try again.");
     }
-  }, []);
+  }, [user]);
 
   if (error) {
     return (
@@ -491,8 +554,8 @@ const Dashboard = () => {
           <div className="mt-6">
             {activeTab === 'overview' && (
               <div>
-                <RecentContracts contracts={dashboardData?.recentContracts} />
                 <MyProducts products={dashboardData?.products} />
+                <RecentContracts contracts={dashboardData?.recentContracts} />
                 <FarmInsights />
               </div>
             )}
@@ -546,4 +609,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default FarmerDashboard; 

@@ -46,6 +46,7 @@ export const productService = {
       if (!response.data.success) {
         throw new Error(response.data.message || 'Failed to fetch products');
       }
+      
       return response.data.products;
     } catch (error) {
       console.error('Error fetching products:', error);

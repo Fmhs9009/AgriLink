@@ -117,7 +117,7 @@ class AuthService {
   // Role checking
   hasRole(allowedRoles) {
     const user = this.getUser();
-    console.log('Checking role for user:', user);
+  //  console.log('Checking role for user:', user);
     
     if (!user) {
       console.log('No user found, returning false');
@@ -125,7 +125,7 @@ class AuthService {
     }
 
     const userRole = user.role || user.accountType;
-    console.log('User role:', userRole, 'Allowed roles:', allowedRoles);
+ //   console.log('User role:', userRole, 'Allowed roles:', allowedRoles);
     
     if (!userRole) {
       console.log('No user role found, returning false');
@@ -134,12 +134,12 @@ class AuthService {
     
     if (Array.isArray(allowedRoles)) {
       const hasRole = allowedRoles.includes(userRole);
-      console.log('Role check result (array):', hasRole);
+    //  console.log('Role check result (array):', hasRole);
       return hasRole;
     }
     
     const hasRole = userRole === allowedRoles;
-    console.log('Role check result (single):', hasRole);
+    //  console.log('Role check result (single):', hasRole);
     return hasRole;
   }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter, FaSeedling, FaImage, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter, FaSeedling, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { productAPI } from '../../services/api';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -22,7 +22,7 @@ const ProductManagement = () => {
   const [productToDelete, setProductToDelete] = useState(null);
   
   // Categories for filtering
-  const categories = ['Grains', 'Vegetables', 'Fruits', 'Dairy', 'Spices', 'Organic'];
+  const categories = ['Grains', 'Vegetables', 'Fruits', 'Dairy', 'Spices', 'Herbs', 'Oilseeds', 'Cash Crops', 'Organic'];
   
   // Fetch products
   useEffect(() => {
@@ -51,67 +51,6 @@ const ProductManagement = () => {
         let productsData = Array.isArray(response.data) ? response.data : 
                          (response.data?.products || []);
         
-        // If no products are returned, use mock data for development
-        if (productsData.length === 0) {
-          console.log("No products found, using mock data");
-          productsData = [
-            { 
-              _id: '1', 
-              name: 'Organic Rice', 
-              price: 120, 
-              stock: 100, 
-              category: 'Grains',
-              description: 'Premium quality organic rice grown without pesticides',
-              unit: 'kg',
-              isOrganic: true,
-              isFeatured: true,
-              images: [
-                'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
-              ],
-              farmer: {
-                _id: userId || '1',
-                name: user?.name || 'Farmer'
-              }
-            },
-            { 
-              _id: '2', 
-              name: 'Premium Wheat', 
-              price: 80, 
-              stock: 150, 
-              category: 'Grains',
-              description: 'High-quality wheat for all your baking needs',
-              unit: 'kg',
-              isOrganic: false,
-              isFeatured: true,
-              images: [
-                'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
-              ],
-              farmer: {
-                _id: userId || '1',
-                name: user?.name || 'Farmer'
-              }
-            },
-            { 
-              _id: '3', 
-              name: 'Organic Vegetables', 
-              price: 60, 
-              stock: 80, 
-              category: 'Vegetables',
-              description: 'Fresh organic vegetables directly from farm',
-              unit: 'kg',
-              isOrganic: true,
-              isFeatured: false,
-              images: [
-                'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
-              ],
-              farmer: {
-                _id: userId || '1',
-                name: user?.name || 'Farmer'
-              }
-            }
-          ];
-        }
-        
         console.log("Setting products:", productsData);
         setProducts(productsData);
         setError(null);
@@ -119,48 +58,7 @@ const ProductManagement = () => {
         console.error('Error fetching products:', err);
         setError('Failed to load products. Please try again.');
         toast.error('Failed to load products');
-        
-        // Use mock data on error
-        const mockProducts = [
-          { 
-            _id: '1', 
-            name: 'Organic Rice', 
-            price: 120, 
-            stock: 100, 
-            category: 'Grains',
-            description: 'Premium quality organic rice grown without pesticides',
-            unit: 'kg',
-            isOrganic: true,
-            isFeatured: true,
-            images: [
-              'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
-            ],
-            farmer: {
-              _id: user?._id || '1',
-              name: user?.name || 'Farmer'
-            }
-          },
-          { 
-            _id: '2', 
-            name: 'Premium Wheat', 
-            price: 80, 
-            stock: 150, 
-            category: 'Grains',
-            description: 'High-quality wheat for all your baking needs',
-            unit: 'kg',
-            isOrganic: false,
-            isFeatured: true,
-            images: [
-              'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
-            ],
-            farmer: {
-              _id: user?._id || '1',
-              name: user?.name || 'Farmer'
-            }
-          }
-        ];
-        
-        setProducts(mockProducts);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -175,6 +73,7 @@ const ProductManagement = () => {
     
     try {
       setLoading(true);
+    //  console.log(productToDelete._id);
       await productAPI.delete(productToDelete._id);
       
       // Update local state
@@ -227,7 +126,7 @@ const ProductManagement = () => {
   const filteredProducts = products
     .filter(product => {
       // Search filter
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           product.description?.toLowerCase().includes(searchTerm.toLowerCase());
       
       // Category filter
@@ -241,16 +140,16 @@ const ProductManagement = () => {
       
       switch (sortField) {
         case 'name':
-          comparison = a.name.localeCompare(b.name);
+          comparison = a.name?.localeCompare(b.name || '') || 0;
           break;
         case 'price':
-          comparison = a.price - b.price;
+          comparison = (a.price || 0) - (b.price || 0);
           break;
         case 'stock':
-          comparison = a.stock - b.stock;
+          comparison = (a.availableQuantity || 0) - (b.availableQuantity || 0);
           break;
         case 'category':
-          comparison = a.category?.localeCompare(b.category || '');
+          comparison = (a.category || '').localeCompare(b.category || '');
           break;
         default:
           comparison = 0;
@@ -383,9 +282,9 @@ const ProductManagement = () => {
                         <tr key={product._id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              {product.image ? (
+                              {product.images && product.images.length > 0 ? (
                                 <img 
-                                  src={product.image} 
+                                  src={product.images[0].url} 
                                   alt={product.name} 
                                   className="h-10 w-10 rounded-full mr-3 object-cover"
                                 />
@@ -407,13 +306,13 @@ const ProductManagement = () => {
                             ₹{formatCurrency(product.price)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product.stock} {product.unit || 'kg'}
+                            {product.availableQuantity} {product.unit || 'kg'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              product.availableQuantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
-                              {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                              {product.availableQuantity > 0 ? 'In Stock' : 'Out of Stock'}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -493,7 +392,7 @@ const ProductManagement = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  onClick={handleDeleteProduct}
+                  onClick={()=>handleDeleteProduct()}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Delete

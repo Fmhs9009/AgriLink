@@ -9,8 +9,9 @@ const {
     getFarmerProducts,
     createProductReview,
     getProductReviews,
-    getAllProductsDebug
-} = require('../Controller/productController');
+    getAllProductsDebug,
+    getProductsByCategory
+} = require('../Controller/ProductController');
 const { verifyToken, isFarmer } = require('../Middleware/auth');
 
 // Public routes
@@ -18,6 +19,7 @@ router.get('/', getAllProducts);
 router.get('/all', getAllProductsDebug);
 router.get('/product/:id', getProductDetails);
 router.get('/reviews/:id', getProductReviews);
+router.get('/category/:category', getProductsByCategory);
 
 // Farmer routes
 router.get('/farmer/products', verifyToken, isFarmer, getFarmerProducts);

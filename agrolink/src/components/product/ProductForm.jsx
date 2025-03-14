@@ -13,6 +13,7 @@ const ProductForm = () => {
   const user = useSelector((state) => state.auth.loginData);
   const isEditMode = !!id;
 
+ // console.log("idddd:",id);
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -155,7 +156,8 @@ const ProductForm = () => {
           setFetchingProduct(true);
           const response = await productAPI.getById(id);
           
-          const productData = response.data;
+          console.log(response);
+          const productData = response.product;
           
           if (!productData) {
             toast.error('Product not found');

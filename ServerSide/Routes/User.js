@@ -2,7 +2,7 @@ const Express = require("express");
 const router = Express.Router();
 
 const { verifyToken, isFarmer, isBuyer, isAdmin } = require("../Middleware/auth");
-const { sendOTP, Signup, Login, changePassword, verifyotp, updateProfile } = require("../Controller/Auth");
+const { sendOTP, Signup, Login, changePassword, verifyotp, updateProfile, getUserById } = require("../Controller/Auth");
 
 // Authentication routes
 router.post("/login", Login);
@@ -26,6 +26,9 @@ router.post("/verifycustomer", verifyToken, isBuyer, (req, res) => {
 router.post("/verifyfarmer", verifyToken, isFarmer, (req, res) => {
     res.json({ success: true, message: "Farmer authorized" });
 });
+
+// Get user by ID
+router.get("/user/:id", getUserById);
 
 module.exports = router;
 

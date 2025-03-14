@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
     averageRating,
     totalReviews,
     farmer = {},
-    stock = 0
+    stock = product.availableQuantity ?? 0
   } = product;
 
   // Use either isOrganic or organic property (for compatibility)
@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
       <Link to={`/product/${_id}`} className="block">
         <div className="relative h-48 bg-gray-200">
           <img
-            src={productImage}
+            src={productImage.url}
             alt={name}
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -93,7 +93,7 @@ const ProductCard = ({ product }) => {
         
         <div className="flex space-x-2">
           <Link
-            to={`/product/${_id}`}
+            to={`/products/${_id}`}
             className="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-md transition-colors flex items-center justify-center"
           >
             <FaShoppingCart className="mr-2" />
