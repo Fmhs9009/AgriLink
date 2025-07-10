@@ -34,6 +34,9 @@ app.use(
   })
 );
 
+// Explicitly handle all OPTIONS requests for CORS preflight
+app.options('*', cors());
+
 // Using fileUpload for routes that don't use multer
 app.use(
   fileUpload({
