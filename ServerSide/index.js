@@ -88,7 +88,12 @@ app.set('socketio', io);
 // Setup socket server
 setupSocketServer(io);
 
-// Start the server
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Only start the server if not running in a serverless environment
+if (process.env.VERCEL === undefined) {
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export the app for Vercel serverless function
+module.exports = app;

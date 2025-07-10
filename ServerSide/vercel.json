@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "shaadi-app-backend",
+    "name": "AgriLink-Server",
     "builds": [
       {
         "src": "index.js",
