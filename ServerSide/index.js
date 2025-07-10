@@ -29,8 +29,8 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(cookiesparser());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
-    credentials: true,
+    origin: '*',
+    // credentials: true, // Remove this line for wildcard origin
   })
 );
 
@@ -76,9 +76,9 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: '*',
+    methods: ["GET", "POST"]
+    // credentials: true // Remove this line for wildcard origin
   }
 });
 
