@@ -29,8 +29,8 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(cookiesparser());
 app.use(
   cors({
-    origin: '*',
-    // credentials: true, // Remove this line for wildcard origin
+    origin: ["http://localhost:3000", "http://localhost:3001","https://agri-link-a07ly0qa5-faaizs-projects-3f9e6585.vercel.app"],
+    credentials: true,
   })
 );
 
@@ -76,9 +76,9 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ["GET", "POST"]
-    // credentials: true // Remove this line for wildcard origin
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
