@@ -29,8 +29,8 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(cookiesparser());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001","https://agri-link-a07ly0qa5-faaizs-projects-3f9e6585.vercel.app"],
-    credentials: true,
+    origin: ["*"],
+    // credentials: true,
   })
 );
 
