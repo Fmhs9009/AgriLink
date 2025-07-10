@@ -5,6 +5,10 @@ const { STATUS_CODES } = require('../config/constants');
  * Global error handling middleware
  */
 const errorMiddleware = (err, req, res, next) => {
+  // Always set CORS headers
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
   err.statusCode = err.statusCode || STATUS_CODES.SERVER_ERROR;
   err.message = err.message || 'Internal Server Error';
 
