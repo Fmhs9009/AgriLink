@@ -1,6 +1,6 @@
 const Notification = require('../Model/Notification');
 const ErrorHandler = require('../utils/errorHandler');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const catchAsyncErrors = require('../Middleware/catchAsyncErrors');
 
 // Get all notifications for the logged-in user
 exports.getNotifications = catchAsyncErrors(async (req, res, next) => {

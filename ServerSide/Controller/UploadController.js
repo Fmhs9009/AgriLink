@@ -1,6 +1,6 @@
 const { cloudinary } = require('../config/cloudinary');
 const ErrorHandler = require('../utils/errorHandler');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const catchAsyncErrors = require('../Middleware/catchAsyncErrors');
 const fs = require('fs');
 
 // Upload image to Cloudinary

@@ -1,7 +1,7 @@
 const Message = require('../Model/Message');
 const Contract = require('../Model/Contract');
 const User = require('../Model/User');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const catchAsyncErrors = require('../Middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const { cloudinary } = require('../config/cloudinary');
 const fs = require('fs');

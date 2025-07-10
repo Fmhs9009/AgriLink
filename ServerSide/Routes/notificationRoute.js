@@ -5,7 +5,7 @@ const {
     markAllAsRead, 
     deleteNotification 
 } = require('../Controller/notificationController');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken } = require('../Middleware/auth');
 
 const router = express.Router();
 

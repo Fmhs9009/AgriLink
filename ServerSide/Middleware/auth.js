@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const ErrorHandler = require('../utils/errorHandler');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const catchAsyncErrors = require('../Middleware/catchAsyncErrors');
 const User = require('../Model/User');
 const { ROLES } = require('../config/constants');
 

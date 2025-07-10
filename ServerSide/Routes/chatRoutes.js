@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken } = require('../Middleware/auth');
 const { 
     getMessages, 
     sendMessage, 
