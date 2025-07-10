@@ -1,4 +1,0 @@
-22:const ContractDetail = () => {
-309:      default:
-606:      default:
-2260:export default ContractDetail; 
